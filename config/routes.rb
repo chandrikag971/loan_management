@@ -1,7 +1,30 @@
 Rails.application.routes.draw do
   devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  # resources :loans do
+  #   member do
+  #     post :approve
+  #     post :reject
+  #     post :adjust
+  #     post :confirm
+  #   end
+  # end
+
+  resources :loans do
+    member do
+      post :approve_without_adjustment
+      post :approve_with_adjustment
+      post :reject
+      post :confirm
+      post :reject_approval
+      post :accept_adjustment
+      post :reject_adjustment
+      post :request_readjustment
+      post :handle_readjustment # For admin to adjust again
+      post :repay
+    end
+  end
+
+
+  root to: 'loans#index'  # Home page that lists loans
 end
