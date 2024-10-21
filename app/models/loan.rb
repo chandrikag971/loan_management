@@ -19,10 +19,10 @@ class Loan < ApplicationRecord
   end
 
   def total_due
-    minutes_open = ((Time.current - created_at) / 60).to_i
-    interest_rate_decimal = interest_rate / 100  # Convert to decimal
+    minutes_open = ((Time.current - updated_at) / 60).to_i
 
-    total_interest = (amount * interest_rate_decimal) * (minutes_open / 525600.0)
+    # interest_rate is assumed to be on per annum basis
+    total_interest = (amount * interest_rate) * (minutes_open / 525600.0)
     (amount + total_interest).round(2)  # Round to 2 decimal places
   end
 end

@@ -1,0 +1,17 @@
+<!-- app/views/loans/_adjustment_form.html.erb -->
+<div id="adjustment-form-<%= loan.id %>" style="display:none;">
+  <%= form_with(url: approve_with_adjustment_loan_path(loan), method: :post, local: true) do %>
+    <div>
+      <label for="amount">New Amount:</label>
+      <%= number_field_tag "amount", loan.amount, step: '0.01', required: true %>
+    </div>
+    <div>
+      <label for="interest_rate">New Interest Rate:</label>
+      <%= number_field_tag "interest_rate", loan.interest_rate, step: '0.01', required: true %>
+    </div>
+    <div>
+      <%= submit_tag 'Approve with Adjustments' %>
+      <button type="button" onclick="document.getElementById('adjustment-form-<%= loan.id %>').style.display='none';">Cancel</button>
+    </div>
+  <% end %>
+</div>

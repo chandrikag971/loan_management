@@ -1,17 +1,13 @@
 <h1>Loans</h1>
 
-<% if current_user.admin? %>
-  <h2>All Loan Requests</h2>
-<% else %>
-  <h2>Your Loans</h2>
-<% end %>
+<h2><%= current_user.admin? ? 'All Loan Requests' : 'Your Loans' %></h2>
 
 <table>
   <thead>
     <tr>
       <th>ID</th>
       <th>Amount</th>
-      <th>InterestRate</th>
+      <th>Interest Rate</th>
       <th>Status</th>
       <th>Total Due</th>
       <th>Actions</th>
@@ -24,66 +20,13 @@
         <td><%= loan.amount %></td>
         <td><%= loan.interest_rate %></td>
         <td><%= loan.status %></td>
-        <td><%= loan.total_due %></td> <!-- Total amount to repay -->
-        <td>
-          <% if loan.status == 'requested' && current_user.admin? %>
-            <%= button_to 'Approve Without Adjustment', approve_without_adjustment_loan_path(loan), method: :post, class: 'btn btn-success' %>
-            <%= button_to 'Reject', reject_loan_path(loan), method: :post, class: 'btn btn-danger' %>
-
-            <%= button_to 'Approve With Adjustment', '#', class: 'btn btn-warning', onclick: "document.getElementById('adjustment-form-#{loan.id}').style.display='block'; return false;" %>
-            <div id="adjustment-form-<%= loan.id %>" style="display:none;">
-              <%= form_with(url: approve_with_adjustment_loan_path(loan), method: :post, local: true) do %>
-                <div>
-                  <label for="amount">New Amount:</label>
-                  <%= number_field_tag "amount", loan.amount, step: '0.01', required: true %>
-                </div>
-                <div>
-                  <label for="interest_rate">New Interest Rate:</label>
-                  <%= number_field_tag "interest_rate", loan.interest_rate, step: '0.01', required: true %>
-                </div>
-                <div>
-                  <%= submit_tag 'Approve with Adjustments' %>
-                  <button type="button" onclick="document.getElementById('adjustment-form-<%= loan.id %>').style.display='none';">Cancel</button>
-                </div>
-              <% end %>
-            </div>
-          <% elsif loan.status == 'readjustment_requested' && current_user.admin? %>
-            <%= button_to 'Reject', reject_loan_path(loan), method: :post, class: 'btn btn-danger' %>
-
-            <%= button_to 'Approve With Adjustment', '#', class: 'btn btn-warning', onclick: "document.getElementById('adjustment-form-#{loan.id}').style.display='block'; return false;" %>
-            <div id="adjustment-form-<%= loan.id %>" style="display:none;">
-              <%= form_with(url: approve_with_adjustment_loan_path(loan), method: :post, local: true) do %>
-                <div>
-                  <label for="amount">New Amount:</label>
-                  <%= number_field_tag "amount", loan.amount, step: '0.01', required: true %>
-                </div>
-                <div>
-                  <label for="interest_rate">New Interest Rate:</label>
-                  <%= number_field_tag "interest_rate", loan.interest_rate, step: '0.01', required: true %>
-                </div>
-                <div>
-                  <%= submit_tag 'Approve with Adjustments' %>
-                  <button type="button" onclick="document.getElementById('adjustment-form-<%= loan.id %>').style.display='none';">Cancel</button>
-                </div>
-              <% end %>
-            </div>
-          <% elsif loan.status == 'approved' && loan.user == current_user %>
-            <%= button_to 'Confirm', confirm_loan_path(loan), method: :post, class: 'btn btn-primary' %>
-            <%= button_to 'Reject', reject_approval_loan_path(loan), method: :post, class: 'btn btn-danger' %>
-          <% elsif loan.waiting_for_adjustment_acceptance? && loan.user == current_user %>
-            <%= button_to 'Accept Adjustment', confirm_loan_path(loan), method: :post, class: 'btn btn-success' %>
-            <%= button_to 'Reject Adjustment', reject_approval_loan_path(loan), method: :post, class: 'btn btn-danger' %>
-            <%= button_to 'Request Readjustment', request_readjustment_loan_path(loan), method: :post, class: 'btn btn-warning' %>
-          <% elsif loan.status == 'open' && loan.user == current_user %>
-            <%= button_to 'Repay Loan', repay_loan_path(loan), method: :post %>
-          <% end %>
-        </td>
+        <td><%= loan.total_due %></td>
+        <%= render 'loan_actions', loan: loan %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-
-<% if !current_user.admin? %>
+<% unless current_user.admin? %>
   <%= link_to 'Request New Loan', new_loan_path, class: 'btn btn-primary' %>
 <% end %>

@@ -56,27 +56,14 @@ class LoansController < ApplicationController
 
   def confirm
     if @loan.user == current_user && (@loan.approved? || @loan.waiting_for_adjustment_acceptance?)
-      # Check if the admin has enough funds
-      admin = User.find_by(admin: true) # Adjust according to your admin user setup
-
-      if admin.wallet >= @loan.amount
-        # Debit from admin wallet and credit to user's wallet
-        admin.wallet -= @loan.amount
-        current_user.wallet += @loan.amount
-
-        # Move the loan to the "open" state
-        @loan.update(status: 'open')
-
-        admin.save
-        current_user.save
-
-        redirect_to loans_path, notice: 'Loan confirmed successfully and funds transferred.'
-      else
-        redirect_to loans_path, alert: 'Insufficient funds in admin wallet.'
-      end
+      admin = User.find_by(admin: true)
+      Loans::Confirm.new(loan: @loan, user: current_user, admin: admin).call
+      redirect_to loans_path, notice: 'Loan confirmed successfully and funds transferred.'
     else
       redirect_to loans_path, alert: 'You are not authorized to confirm this loan or the loan is not approved.'
     end
+  rescue => e
+    redirect_with_alert(e.message)
   end
 
   def reject_approval
@@ -99,39 +86,15 @@ class LoansController < ApplicationController
 
   def repay
     if @loan.user == current_user && @loan.status == 'open'
-      total_due = @loan.total_due
-
-      if current_user.wallet >= total_due
-        # Deduct from user's wallet and add to admin's wallet
-        current_user.wallet -= total_due
-        admin = User.find_by(admin: true)
-        admin.wallet += total_due
-
-        # Update loan status to closed
-        @loan.update(status: 'closed', interest_rate: 0) # Reset interest
-
-        current_user.save
-        admin.save
-        @loan.save
-
-        redirect_to loans_path, notice: 'Loan repaid successfully.'
-      else
-        # If insufficient funds, deduct only available amount
-        amount_paid = current_user.wallet
-        current_user.wallet = 0
-        admin.wallet += amount_paid
-        @loan.update(status: 'closed', interest_rate: 0) # Close the loan
-        current_user.save
-        admin.save
-        @loan.save
-
-        redirect_to loans_path, notice: 'Loan partially repaid. Loan is now closed.'
-      end
+      admin = User.find_by(admin: true)
+      Loans::Repay.new(loan: @loan, user: current_user, admin: admin).call
+      redirect_to loans_path, notice: 'Loan repaid successfully.'
     else
       redirect_to loans_path, alert: 'You are not authorized to repay this loan.'
     end
+  rescue => e
+    redirect_with_alert(e.message)
   end
-
 
   private
 

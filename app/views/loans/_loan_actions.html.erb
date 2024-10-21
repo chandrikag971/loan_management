@@ -1,0 +1,27 @@
+<td>
+  <% if loan.status == 'requested' && current_user.admin? %>
+    <%= button_to 'Approve Without Adjustment', approve_without_adjustment_loan_path(loan), method: :post, class: 'btn btn-success' %>
+    <%= button_to 'Reject', reject_loan_path(loan), method: :post, class: 'btn btn-danger' %>
+
+    <%= button_to 'Approve With Adjustment', '#', class: 'btn btn-warning', onclick: "document.getElementById('adjustment-form-#{loan.id}').style.display='block'; return false;" %>
+    <%= render 'adjustment_form', loan: loan %>
+
+  <% elsif loan.status == 'readjustment_requested' && current_user.admin? %>
+    <%= button_to 'Reject', reject_loan_path(loan), method: :post, class: 'btn btn-danger' %>
+
+    <%= button_to 'Approve With Adjustment', '#', class: 'btn btn-warning', onclick: "document.getElementById('adjustment-form-#{loan.id}').style.display='block'; return false;" %>
+    <%= render 'adjustment_form', loan: loan %>
+
+  <% elsif loan.status == 'approved' && loan.user == current_user %>
+    <%= button_to 'Confirm', confirm_loan_path(loan), method: :post, class: 'btn btn-primary' %>
+    <%= button_to 'Reject', reject_approval_loan_path(loan), method: :post, class: 'btn btn-danger' %>
+
+  <% elsif loan.waiting_for_adjustment_acceptance? && loan.user == current_user %>
+    <%= button_to 'Accept Adjustment', confirm_loan_path(loan), method: :post, class: 'btn btn-success' %>
+    <%= button_to 'Reject Adjustment', reject_approval_loan_path(loan), method: :post, class: 'btn btn-danger' %>
+    <%= button_to 'Request Readjustment', request_readjustment_loan_path(loan), method: :post, class: 'btn btn-warning' %>
+
+  <% elsif loan.status == 'open' && loan.user == current_user %>
+    <%= button_to 'Repay Loan', repay_loan_path(loan), method: :post %>
+  <% end %>
+</td>
