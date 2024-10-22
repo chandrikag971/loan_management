@@ -19,9 +19,9 @@ class Loan < ApplicationRecord
   end
 
   def total_due
-      interest = principal * interest_rate * (5.0 / (60 * 24))
+    interest = principal * interest_rate * (5.0 / (60 * 24))
 
-      self.amount = (amount + interest).round(2)
-      self.save
+    self.amount = (amount + interest).round(2)
+    self.save
   end
 end
