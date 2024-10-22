@@ -37,7 +37,7 @@ class LoansController < ApplicationController
 
   def reject
     if current_user.admin? && @loan.requested?
-      @loan.update(status: 'rejected')
+      @loan.update(status: 'rejected', amount: 0.0)
 
       redirect_to loans_path, notice: 'Loan request rejected successfully.'
     else
@@ -99,7 +99,7 @@ class LoansController < ApplicationController
   private
 
   def loan_params
-    params.require(:loan).permit(:amount, :interest_rate)
+    params.require(:loan).permit(:principal, :interest_rate)
   end
 
   def set_loan

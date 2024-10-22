@@ -9,19 +9,18 @@ module Loans
     attr_reader :loan, :user, :admin
 
     def call
-      byebug
-      return unless admin.wallet >= loan.amount
+      return unless admin.wallet >= loan.principal
 
       transfer_funds
 
-      loan.update(status: 'open')
+      loan.update(status: 'open', amount: loan.principal)
     end
 
     private
 
     def transfer_funds
-      admin.wallet -= loan.amount
-      user.wallet += loan.amount
+      admin.wallet -= loan.principal
+      user.wallet += loan.principal
       admin.save!
       user.save!
     end

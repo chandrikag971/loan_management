@@ -10,17 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_19_125850) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_22_142901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "loans", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.decimal "amount", precision: 10, scale: 2
+    t.decimal "amount", default: "0.0"
     t.decimal "interest_rate", precision: 5, scale: 2
     t.string "status", default: "requested"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "principal", default: "0.0"
     t.index ["user_id"], name: "index_loans_on_user_id"
   end
 
@@ -33,7 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_19_125850) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "wallet", default: "0.0"
-    t.boolean "admin", default: false
+    t.boolean "admin"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

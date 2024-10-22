@@ -1,15 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # resources :loans do
-  #   member do
-  #     post :approve
-  #     post :reject
-  #     post :adjust
-  #     post :confirm
-  #   end
-  # end
-
   resources :loans do
     member do
       post :approve_without_adjustment
