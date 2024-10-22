@@ -4,7 +4,7 @@ class Loan < ApplicationRecord
   STATUSES = %w[requested approved open closed rejected waiting_for_adjustment_acceptance readjustment_requested].freeze
 
   validates :status, inclusion: { in: STATUSES }
-  validates :amount, :interest_rate, presence: true
+  validates :principal, :interest_rate, presence: true
 
   def requested?
     status == 'requested'
@@ -19,10 +19,9 @@ class Loan < ApplicationRecord
   end
 
   def total_due
-    minutes_open = ((Time.current - updated_at) / 60).to_i
+      interest = principal * interest_rate * (5.0 / (60 * 24))
 
-    # interest_rate is assumed to be on per annum basis
-    total_interest = (amount * interest_rate) * (minutes_open / 525600.0)
-    (amount + total_interest).round(2)  # Round to 2 decimal places
+      self.amount = (amount + interest).round(2)
+      self.save
   end
 end

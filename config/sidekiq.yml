@@ -1,5 +1,5 @@
 :scheduler:
   :schedule:
     calculate_loan_interest:
-      cron: "*/1 * * * *" # Every 5 minutes
+      cron: "*/5 * * * *" # Every 5 minutes
       class: CalculateLoanInterestJob

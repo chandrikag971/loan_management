@@ -6,7 +6,7 @@
   <thead>
     <tr>
       <th>ID</th>
-      <th>Amount</th>
+      <th>Principal</th>
       <th>Interest Rate</th>
       <th>Status</th>
       <th>Total Due</th>
@@ -17,10 +17,10 @@
     <% @loans.each do |loan| %>
       <tr>
         <td><%= loan.id %></td>
-        <td><%= loan.amount %></td>
+        <td><%= loan.principal %></td>
         <td><%= loan.interest_rate %></td>
         <td><%= loan.status %></td>
-        <td><%= loan.total_due %></td>
+        <td><%= loan.amount %></td>
         <%= render 'loan_actions', loan: loan %>
       </tr>
     <% end %>

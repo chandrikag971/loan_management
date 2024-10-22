@@ -3,7 +3,7 @@
   <%= form_with(url: approve_with_adjustment_loan_path(loan), method: :post, local: true) do %>
     <div>
       <label for="amount">New Amount:</label>
-      <%= number_field_tag "amount", loan.amount, step: '0.01', required: true %>
+      <%= number_field_tag "amount", loan.principal, step: '0.01', required: true %>
     </div>
     <div>
       <label for="interest_rate">New Interest Rate:</label>

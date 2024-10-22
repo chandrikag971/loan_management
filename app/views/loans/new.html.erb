@@ -1,6 +1,6 @@
 <h1>Request a New Loan</h1>
 
-<%= form_with(model: @loan, local: true) do |form| %>
+<%= form_with(model: @loan, local: true, data: { turbo: false }) do |form| %>
   <% if @loan.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@loan.errors.count, "error") %> prohibited this loan from being saved:</h2>
@@ -14,8 +14,8 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :amount %>
-    <%= form.number_field :amount, step: '0.01', required: true %>
+    <%= form.label :principal %>
+    <%= form.number_field :principal, step: '0.01', required: true %>
   </div>
 
   <div class="field">
